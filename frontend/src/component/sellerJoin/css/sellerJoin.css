@@ -24,7 +24,7 @@ input {
     display:block;
     height:40px;
     width:100%;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
     padding:0px;
     font-size: 1rem;
 }
@@ -37,4 +37,12 @@ input {
 
 .hasError {
     border:2px solid red;
+}
+
+.errorMessage {
+    color: red;
+    text-align: left;
+    font-size: 0.7rem;
+    padding-left: 5px;
+    margin-bottom: 5px;
 }
