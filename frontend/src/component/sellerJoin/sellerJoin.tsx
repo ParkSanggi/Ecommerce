@@ -6,7 +6,6 @@ export default class SellerJoin extends React.Component<{},{}> {
 
     private readonly axiosInstance:AxiosInstance;
 
-
     constructor(props: {}) {
         super(props);
         
@@ -20,44 +19,64 @@ export default class SellerJoin extends React.Component<{},{}> {
 
     join(e:React.FormEvent<HTMLFormElement>):void {
         e.preventDefault();
+        this.clearErrorMessageIn(e.currentTarget);
         if (!this.validateForm(e)) {
             console.log("no join");
         }
     }
 
+    private clearErrorMessageIn(form: EventTarget & Element):void {
+        let messages = form.getElementsByClassName("errorMessage");
+
+        for (let message of Array.from(messages)) {
+            message.remove();
+        }
+    }
+
     private validateForm(e:React.FormEvent<HTMLFormElement>):boolean {
-        
+        let form = e.currentTarget;
         // 폼이 모두 채워졌는지 체크
         // 아이디 중복체크
-        if (!this.isFull(e.currentTarget)
-            || this.isDuplicated(e.currentTarget.loginId.value)) {
+        if (!this.isFull(form)
+            || this.isDuplicated(form.loginId)) {
             return false;
         }
         // 비밀번호와 비밀번호 확인 체크
+        console.log("valid");
         return true;
     }
 
-    private isDuplicated(loginId:String):boolean {
+    private isDuplicated(loginId: HTMLInputElement):boolean {
         const axios = require('axios').default;
-
-        this.axiosInstance.get(`seller/join?loginId=${loginId}`).then((response)=>{
-            console.log(response.data);
-        })
-        return false;
+        let result = true;
+        
+        console.log("start req");
+        this.axiosInstance.get(`seller/join?loginId=${loginId.value}`)
+            .then((response)=>{
+                console.log("response");
+                console.log(response.data);
+                if (!response.data.isDuplicated) {
+                    loginId.after(
+                        ErrorMessage.create("이미 존재하는 아이디 입니다"))
+                } else {
+                    result = false;
+                }
+                console.log("end is duplicated");
+            })
+        return result;
     }
 
-    private isFull(form: EventTarget & Element):boolean {
-        let inputs :HTMLCollectionOf<HTMLInputElement>;
-        
-        inputs = form.getElementsByTagName("input");
+    private isFull(form: HTMLFormElement):boolean {
+        let inputs = form.getElementsByTagName("input");
+        let ret = true;
+
         for (let input of Array.from(inputs)) {
             if (!input.value) {
-                input.className="hasError";
-                return false;
+                input.after(ErrorMessage.create("필수 항목입니다"));
+                ret = false;
             }
-            input.className="";
         }
-        return true;
+        return ret;
     }
 
     render() {
@@ -77,4 +96,15 @@ export default class SellerJoin extends React.Component<{},{}> {
           </div>
       )
     }
+  }
+
+
+  class ErrorMessage {
+      static create(message:string) {
+        let errorMessage = document.createElement('div');
+
+        errorMessage.innerText = message;
+        errorMessage.className = "errorMessage"
+        return errorMessage;
+      }
   }
