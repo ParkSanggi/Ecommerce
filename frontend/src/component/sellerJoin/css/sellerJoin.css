@@ -46,3 +46,11 @@ input {
     padding-left: 5px;
     margin-bottom: 5px;
 }
+
+.completionMessage {
+    color: rgb(6, 170, 6);
+    text-align: left;
+    font-size: 0.7rem;
+    padding-left: 5px;
+    margin-bottom: 5px;
+}
