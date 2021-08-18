@@ -3,6 +3,7 @@ import './App.css';
 import Home from './component/home/home';
 import SellerJoin from './component/sellerJoin/sellerJoin';
 import {BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import Login from './component/login/login';
 
 class App extends React.Component<{}, {}> {
   render() {
@@ -11,6 +12,7 @@ class App extends React.Component<{}, {}> {
         <Router>
           <Switch>
             <Route path="/seller/join" component={SellerJoin} />
+            <Route path="/login" component={Login} />
             <Route path="/" component={Home} />
           </Switch>
         </Router>
