@@ -1,18 +1,24 @@
 import axios, {AxiosInstance} from 'axios';
 import React, { RefObject } from 'react';
+import { Redirect } from 'react-router-dom';
 import './css/sellerJoin.css'
 
-export default class SellerJoin extends React.Component<{},{}> {
+export default class SellerJoin extends React.Component<{},{joinSuccess:boolean}> {
     private readonly axiosInstance:AxiosInstance;
     private firstPassword:RefObject<HTMLInputElement> = React.createRef();
+    private secondPassword:RefObject<HTMLInputElement> = React.createRef();
     private validLoginId = false;
+    private validPassword = false;
     private matchedPassword = false;
 
     constructor(props: {}) {
         super(props);
+        this.state = {
+            joinSuccess: false
+        }
         this.axiosInstance = axios.create(
             {
-                baseURL:'http://localhost:8080/'
+                baseURL:'http://localhost:8080'
             }
         )
         this.join = this.join.bind(this);
@@ -22,20 +28,23 @@ export default class SellerJoin extends React.Component<{},{}> {
     }
 
     render() {
+        if (this.state.joinSuccess) {
+            return <Redirect to="/login" />
+        }
         return (
             <div className="sellerJoin">
                 <div className="joinText">
                     저희와 함께<br/>비즈니스를 시작하세요!
                 </div>
-                <form onSubmit={this.join} className="joinForm" action="">
+                <form onSubmit={this.join} className="joinForm">
                     <div>
                         <input onBlur={this.checkLoginIdDuplication} type="text" name="loginId" placeholder="  아이디"/>
                     </div>
                     <div>
-                        <input onBlur={this.checkFirstPassword} ref={this.firstPassword} type="password" name="password" placeholder="  비밀번호"/>
+                        <input onBlur={this.checkFirstPassword} ref={this.firstPassword} type="password" name="firstPassword" placeholder="  비밀번호"/>
                     </div>
                     <div>
-                        <input onBlur={this.checkSecondPassword} type="password" placeholder="  비밀번호 확인"/>
+                        <input onBlur={this.checkSecondPassword} ref={this.secondPassword} type="password" name="secondPassword" placeholder="  비밀번호 확인"/>
                     </div>
                     <input type="text" placeholder="  이메일" />
                     <input type="text" placeholder="  핸드폰 번호 ('-'제외)"/>
@@ -49,14 +58,37 @@ export default class SellerJoin extends React.Component<{},{}> {
         let form:HTMLFormElement = e.currentTarget;
         
         e.preventDefault();
+        if (this.checkJoinCondition(form)) {
+            this.axiosInstance.post("/seller/join", {
+                loginId: form.loginId.value,
+                password: form.firstPassword.value
+            })
+            .then((response)=>{
+                alert("가입이 완료되었습니다.")
+                this.setState({
+                    joinSuccess:true
+                })
+            })
+            .catch(()=>{
+                alert("가입 요청에 실패했습니다.\n잠시 후 다시 시도해주세요")
+            })
+        }
+    }
+
+    private checkJoinCondition(form:HTMLFormElement):boolean {
         if (!this.validLoginId) {
-            form.loginId.style.border = '2px solid red';
-            return ;
+            form.loginId.focus();
+            return false;
+        }
+        if (!this.validPassword) {
+            form.firstPassword.focus();
+            return false;
         }
         if (!this.matchedPassword) {
-            form.loginId.style.border = '2px solid red';
-            return ;
+            form.secondPassword.focus();
+            return false;
         }
+        return true;
     }
 
     checkLoginIdDuplication(e:React.FocusEvent<HTMLInputElement>):void {
@@ -68,7 +100,7 @@ export default class SellerJoin extends React.Component<{},{}> {
             this.validLoginId = false;
             return ;
         }
-        this.axiosInstance.get(`seller/join?loginId=${loginId.value}`)
+        this.axiosInstance.get(`/seller/join?loginId=${loginId.value}`)
             .then((response)=>{
                 if (response.data.duplicated) {
                     loginId.after(ErrorMessage.idAlreadyExist());
@@ -78,6 +110,9 @@ export default class SellerJoin extends React.Component<{},{}> {
                     this.validLoginId = true;
                 }
             })
+            .catch(()=>{
+                alert("아이디 중복 검사에 실패했습니다.\n잠시 후 다시 시도해주세요")
+            })
     }
 
     checkFirstPassword(e:React.FocusEvent<HTMLInputElement>) {
@@ -86,7 +121,15 @@ export default class SellerJoin extends React.Component<{},{}> {
         this.cleanMessages(firstPassword);
         if (!firstPassword.value) {
             firstPassword.after(ErrorMessage.mustFillData());
-        }
+            this.validPassword = false;
+            return ;
+        } else if (this.secondPassword.current!.value && 
+                    firstPassword.value != this.secondPassword.current!.value) {
+                    this.cleanMessages(this.secondPassword.current!);
+                    this.secondPassword.current!.after(ErrorMessage.passwordDoNotMatch());
+                    this.matchedPassword = false;
+                }
+        this.validPassword = true;
     }
 
     checkSecondPassword(e:React.FocusEvent<HTMLInputElement>):void {
@@ -98,7 +141,7 @@ export default class SellerJoin extends React.Component<{},{}> {
             this.matchedPassword = false;
             return ;
         }
-        if (this.firstPassword.current?.value != secondPassword.value) {
+        if (this.firstPassword.current?.value !== secondPassword.value) {
             secondPassword.after(ErrorMessage.passwordDoNotMatch());
             this.matchedPassword = false;
         } else {
