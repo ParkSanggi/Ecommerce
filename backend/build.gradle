@@ -26,6 +26,7 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok:1.18.20'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test:2.5.3'
 	implementation 'mysql:mysql-connector-java:8.0.25'
+	runtimeOnly 'com.h2database:h2:1.4.200'
 }
 
 test {
