@@ -100,9 +100,9 @@ export default class SellerJoin extends React.Component<{},{joinSuccess:boolean}
             this.validLoginId = false;
             return ;
         }
-        this.axiosInstance.get(`/seller/join?loginId=${loginId.value}`)
+        this.axiosInstance.get(`/user/check?loginId=${loginId.value}`)
             .then((response)=>{
-                if (response.data.duplicated) {
+                if (response.data.existence) {
                     loginId.after(ErrorMessage.idAlreadyExist());
                     this.validLoginId = false;
                 } else {
