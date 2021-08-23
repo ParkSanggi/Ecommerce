@@ -1,7 +1,6 @@
 package ecommerce.ecommerce.domain.user.repository;
 
 import ecommerce.ecommerce.domain.user.User;
-import ecommerce.ecommerce.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
