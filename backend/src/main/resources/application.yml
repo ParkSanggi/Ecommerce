@@ -4,6 +4,7 @@ spring:
     generate-ddl: true
     database: mysql
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    open-in-view: true
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
