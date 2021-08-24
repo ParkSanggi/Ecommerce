@@ -1,5 +1,8 @@
 package ecommerce.ecommerce.domain.user.service;
 
+import ecommerce.ecommerce.domain.user.User;
+
 public interface UserService {
-    boolean isExist(String loginId);
+    void join(User user);
 }
+
