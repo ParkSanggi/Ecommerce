@@ -27,6 +27,9 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test:2.5.3'
 	implementation 'mysql:mysql-connector-java:8.0.25'
 	runtimeOnly 'com.h2database:h2:1.4.200'
+	implementation 'org.springframework.boot:spring-boot-starter-security:2.5.3'
+	implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
 }
 
 test {
