@@ -45,7 +45,7 @@ public class UserControllerIntegrationTest {
         userRepository.save(user);
 
         //when
-        ResultActions result = mockMvc.perform(get("/user/check?loginId=test1"));
+        ResultActions result = mockMvc.perform(get("/users/check?loginId=test1"));
 
         //then
         result.andExpect(status().isOk())
@@ -56,7 +56,7 @@ public class UserControllerIntegrationTest {
     void checkExistence_새로운_아이디면_false() throws Exception {
 
         //when
-        ResultActions result = mockMvc.perform(get("/user/check?loginId=test1"));
+        ResultActions result = mockMvc.perform(get("/users/check?loginId=test1"));
 
         //then
         result.andExpect(status().isOk())
@@ -72,7 +72,7 @@ public class UserControllerIntegrationTest {
         String content = new ObjectMapper().writeValueAsString(joinInfo);
 
         //when
-        ResultActions result = mockMvc.perform(post("/user")
+        ResultActions result = mockMvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
                 .accept(MediaType.APPLICATION_JSON));
