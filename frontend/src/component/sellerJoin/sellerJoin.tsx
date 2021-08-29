@@ -18,7 +18,7 @@ export default class SellerJoin extends React.Component<{},{joinSuccess:boolean}
         }
         this.axiosInstance = axios.create(
             {
-                baseURL:'http://localhost:8080'
+                baseURL:'http://localhost/api'
             }
         )
         this.join = this.join.bind(this);
@@ -59,7 +59,7 @@ export default class SellerJoin extends React.Component<{},{joinSuccess:boolean}
         
         e.preventDefault();
         if (this.checkJoinCondition(form)) {
-            this.axiosInstance.post("/seller/join", {
+            this.axiosInstance.post("/users", {
                 loginId: form.loginId.value,
                 password: form.firstPassword.value
             })
@@ -100,7 +100,7 @@ export default class SellerJoin extends React.Component<{},{joinSuccess:boolean}
             this.validLoginId = false;
             return ;
         }
-        this.axiosInstance.get(`/user/check?loginId=${loginId.value}`)
+        this.axiosInstance.get(`/users/check?loginId=${loginId.value}`)
             .then((response)=>{
                 if (response.data.existence) {
                     loginId.after(ErrorMessage.idAlreadyExist());
