@@ -7,14 +7,20 @@ services:
       - "80:80"
   backend:
     build: backend
-    ports: 
-      - "8080:8080"
+    expose: 
+      - 8080
+    depends_on: 
+      - database
   database:
     image: mysql
+    cap_add:
+      - SYS_NICE
     environment:
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
       MYSQL_PASSWORD_FILE: /run/secrets/db_password
       MYSQL_DATABASE: ecommerce
+    volumes: 
+      - volume-test:/var/lib/mysql
     secrets:
       - db_root_password
       - db_password
@@ -24,3 +30,6 @@ secrets:
     file: ./db_root_password.txt
   db_password:
     file: ./db_root_password.txt
+
+volumes: 
+  volume-test:
