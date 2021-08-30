@@ -18,7 +18,7 @@ export default class SellerJoin extends React.Component<{},{joinSuccess:boolean}
         }
         this.axiosInstance = axios.create(
             {
-                baseURL:'http://localhost/api'
+                baseURL:'http://13.209.228.19/api'
             }
         )
         this.join = this.join.bind(this);
