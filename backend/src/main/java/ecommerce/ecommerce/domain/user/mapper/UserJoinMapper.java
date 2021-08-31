@@ -9,5 +9,6 @@ import org.mapstruct.Mapping;
 public interface UserJoinMapper {
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "authorities", ignore = true)
     User toUserEntity(JoinInfo joinInfo);
 }
