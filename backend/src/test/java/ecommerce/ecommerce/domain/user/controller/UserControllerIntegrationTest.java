@@ -40,12 +40,12 @@ public class UserControllerIntegrationTest {
     void checkExistence_이미_존재하는_아이디면_true() throws Exception {
         //given
         User user = User.builder()
-                .loginId("test1")
+                .username("test1")
                 .password("1234").build();
         userRepository.save(user);
 
         //when
-        ResultActions result = mockMvc.perform(get("/users/check?loginId=test1"));
+        ResultActions result = mockMvc.perform(get("/users/check?username=test1"));
 
         //then
         result.andExpect(status().isOk())
@@ -56,7 +56,7 @@ public class UserControllerIntegrationTest {
     void checkExistence_새로운_아이디면_false() throws Exception {
 
         //when
-        ResultActions result = mockMvc.perform(get("/users/check?loginId=test1"));
+        ResultActions result = mockMvc.perform(get("/users/check?username=test1"));
 
         //then
         result.andExpect(status().isOk())
@@ -66,9 +66,9 @@ public class UserControllerIntegrationTest {
     @Test
     void create_비밀번호는_암호화되어_저장되어야_한다() throws Exception {
         //given
-        String loginId = "test";
+        String username = "test";
         String password = "1234";
-        JoinInfo joinInfo = new JoinInfo(loginId, password);
+        JoinInfo joinInfo = new JoinInfo(username, password);
         String content = new ObjectMapper().writeValueAsString(joinInfo);
 
         //when
@@ -78,7 +78,7 @@ public class UserControllerIntegrationTest {
                 .accept(MediaType.APPLICATION_JSON));
 
         //then
-        User user = userRepository.findByLoginId(loginId).orElseThrow();
+        User user = userRepository.findByUsername(username).orElseThrow();
         result.andExpect(status().isCreated());
         Assertions.assertTrue(passwordEncoder.matches(password, user.getPassword()));
     }

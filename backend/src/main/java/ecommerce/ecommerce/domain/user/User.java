@@ -23,8 +23,8 @@ public class User {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "login_id", nullable = false, unique = true)
-    private String loginId;
+    @Column(name = "username", nullable = false, unique = true)
+    private String username;
 
     @Column(name = "password", nullable = false)
     private String password;

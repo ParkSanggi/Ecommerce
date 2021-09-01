@@ -7,11 +7,13 @@ import ecommerce.ecommerce.domain.user.mapper.UserJoinMapper;
 import ecommerce.ecommerce.domain.user.repository.UserRepository;
 import ecommerce.ecommerce.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
+@Slf4j
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -29,12 +31,10 @@ public class UserController {
     }
 
     @GetMapping("/check")
-    public checkExistenceDTO checkExistence(@RequestParam String loginId) {
+    public checkExistenceDTO checkExistence(@RequestParam String username) {
         return new checkExistenceDTO(
-                userRepository.existsByLoginId(loginId));
+                userRepository.existsByUsername(username));
     }
-
-
 }
 
 
