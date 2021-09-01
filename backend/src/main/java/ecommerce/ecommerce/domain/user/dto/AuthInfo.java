@@ -1,18 +1,19 @@
 package ecommerce.ecommerce.domain.user.dto;
 
-import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
 @AllArgsConstructor
 public class AuthInfo {
 
-    @NotNull
+    @NotBlank
     String username;
 
-    @NotNull
+    @NotBlank
     String password;
 }
