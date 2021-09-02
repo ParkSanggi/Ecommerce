@@ -2,7 +2,7 @@ import axios, {AxiosInstance} from 'axios';
 import React, { RefObject } from 'react';
 import { Redirect } from 'react-router-dom';
 import './css/sellerJoin.css'
-
+import { ErrorMessage, CompletionMessage, cleanMessages } from '../../util/message';
 export default class SellerJoin extends React.Component<{},{joinSuccess:boolean}> {
     private readonly axiosInstance:AxiosInstance;
     private firstPassword:RefObject<HTMLInputElement> = React.createRef();
@@ -60,7 +60,7 @@ export default class SellerJoin extends React.Component<{},{joinSuccess:boolean}
         e.preventDefault();
         if (this.checkJoinCondition(form)) {
             this.axiosInstance.post("/users", {
-                loginId: form.loginId.value,
+                username: form.loginId.value,
                 password: form.firstPassword.value
             })
             .then((response)=>{
@@ -94,13 +94,13 @@ export default class SellerJoin extends React.Component<{},{joinSuccess:boolean}
     checkLoginIdDuplication(e:React.FocusEvent<HTMLInputElement>):void {
         let loginId:HTMLInputElement = e.currentTarget;
 
-        this.cleanMessages(loginId);
+        cleanMessages(loginId);
         if (!loginId.value) {
             loginId.after(ErrorMessage.mustFillData());
             this.validLoginId = false;
             return ;
         }
-        this.axiosInstance.get(`/users/check?loginId=${loginId.value}`)
+        this.axiosInstance.get(`/users/check?username=${loginId.value}`)
             .then((response)=>{
                 if (response.data.existence) {
                     loginId.after(ErrorMessage.idAlreadyExist());
@@ -118,14 +118,14 @@ export default class SellerJoin extends React.Component<{},{joinSuccess:boolean}
     checkFirstPassword(e:React.FocusEvent<HTMLInputElement>) {
         let firstPassword: HTMLInputElement = e.currentTarget;
 
-        this.cleanMessages(firstPassword);
+        cleanMessages(firstPassword);
         if (!firstPassword.value) {
             firstPassword.after(ErrorMessage.mustFillData());
             this.validPassword = false;
             return ;
         } else if (this.secondPassword.current!.value && 
                     firstPassword.value != this.secondPassword.current!.value) {
-                    this.cleanMessages(this.secondPassword.current!);
+                    cleanMessages(this.secondPassword.current!);
                     this.secondPassword.current!.after(ErrorMessage.passwordDoNotMatch());
                     this.matchedPassword = false;
                 }
@@ -135,7 +135,7 @@ export default class SellerJoin extends React.Component<{},{joinSuccess:boolean}
     checkSecondPassword(e:React.FocusEvent<HTMLInputElement>):void {
         let secondPassword:HTMLInputElement = e.currentTarget;
 
-        this.cleanMessages(secondPassword);
+        cleanMessages(secondPassword);
         if (!secondPassword.value) {
             secondPassword.after(ErrorMessage.mustFillData());
             this.matchedPassword = false;
@@ -148,64 +148,5 @@ export default class SellerJoin extends React.Component<{},{joinSuccess:boolean}
             secondPassword.after(CompletionMessage.passwordsAreMatch());
             this.matchedPassword = true;
         }
-    }
-
-    private cleanMessages(target:HTMLElement) {
-        let errorMessages:HTMLCollectionOf<Element> = 
-            target.parentElement!.getElementsByClassName("errorMessage");
-        let completionMessages:HTMLCollectionOf<Element> = 
-            target.parentElement!.getElementsByClassName("completionMessage");
-
-        for (let message of Array.from(errorMessages)) {
-            message.remove();
-        }
-        for (let message of Array.from(completionMessages)) {
-            message.remove();
-        }
-    }
-}
-
-class CompletionMessage {
-    static loginIdIsUsable() {
-        let message = "사용 가능한 아이디 입니다";
-        return this.create(message);
-    }
-
-    static passwordsAreMatch() {
-        let message = "비밀번호가 일치합니다";
-        return this.create(message);
-    }
-
-    private static create(message:string) {
-        let errorMessage = document.createElement('div');
-
-        errorMessage.innerText = message;
-        errorMessage.className = "completionMessage";
-        return errorMessage;
-    }
-}
-
-class ErrorMessage {
-    static mustFillData() {
-        let message = "필수 항목입니다"
-        return ErrorMessage.create(message);
-    }
-
-    static idAlreadyExist() {
-        let message = "이미 존재하는 아이디입니다"
-        return ErrorMessage.create(message);
-    }
-
-    static passwordDoNotMatch() {
-        let message = "비밀번호가 일치하지 않습니다";
-        return ErrorMessage.create(message);
-    }
-
-    private static create(message:string) {
-        let errorMessage = document.createElement('div');
-
-        errorMessage.innerText = message;
-        errorMessage.className = "errorMessage"
-        return errorMessage;
     }
 }
